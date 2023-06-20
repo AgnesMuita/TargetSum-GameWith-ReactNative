@@ -3,13 +3,16 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
 import PropTypes from "prop-types";
+import RandomNumber from "./RandomNumber"
 
 
 export default class Game extends Component {
   static PropTypes={
     randomNumberCount:PropTypes.number.isRequired,
   }
-  // target = 10+ Math.floor(40* Math.random()) 
+  state = {
+    selectedNumbers:[],
+  }
   randomNumbers = Array
     .from({length:this.props.randomNumberCount})
     .map(()=>1+ Math.floor(10* Math.random()))
@@ -17,6 +20,16 @@ export default class Game extends Component {
   target = this.randomNumbers
     .slice(0,this.props.randomNumberCount-2)
     .reduce((acc, curr)=>acc+curr,0);
+
+  isNumberSelected = (numberIndex)=>
+  {
+    return this.state.selectedNumbers.indexOf(numberIndex)>=0;
+  }
+
+  selectNumber=(numberIndex)=>{
+    this.setState((prevState)=>({selectedNumbers:[...prevState.selectedNumbers, numberIndex],
+    }));
+  }
   render() {
     console.log(this.randomNumbers)
     console.log("randomnumbers")
@@ -25,7 +38,14 @@ export default class Game extends Component {
           <Text style={styles.target}>{this.target}</Text>
           <View style={styles.randomContainer}>
             {this.randomNumbers.map((randomNumber, index)=>
-              <Text style={styles.random} key={index}>{randomNumber}</Text>
+              <RandomNumber 
+                style={styles.random} 
+                key={index}
+                id={index}
+                number={randomNumber}
+                isDisabled = {this.isNumberSelected(index)}
+                onPress={this.selectNumber}
+              />
             )}
           </View>
           <StatusBar style="auto" />
@@ -54,13 +74,5 @@ const styles = StyleSheet.create({
     flexWrap:"wrap",  
     justifyContent:'space-around'
   },
-  random:{
-    backgroundColor:"purple",
-    color:"white",
-    width:100,
-    marginHorizontal:15,
-    marginVertical:25,
-    fontSize:35,
-    textAlign:"center"
-  } 
+
 });
