@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
 import shuffle from "lodash.shuffle";
 
 import propTypes from "prop-types";
@@ -11,6 +11,7 @@ export default class Game extends Component {
   static propTypes={
     randomNumberCount:propTypes.number.isRequired,
     initialSeconds:propTypes.number.isRequired,
+    onPlayAgain: propTypes.func.isRequired,
   }
   state = {
     selectedNumbers:[],
@@ -102,6 +103,7 @@ export default class Game extends Component {
           </View>
           <StatusBar style="auto" />
           <Text>{gameStatus}</Text>
+          <Button title= "Play Again" onPress={this.props.onPlayAgain}/>
       </View>
     )
   }
