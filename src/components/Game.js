@@ -2,13 +2,13 @@ import React, { Component } from 'react'
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 
-import PropTypes from "prop-types";
+import propTypes from "prop-types";
 import RandomNumber from "./RandomNumber"
 
 
 export default class Game extends Component {
-  static PropTypes={
-    randomNumberCount:PropTypes.number.isRequired,
+  static propTypes={
+    randomNumberCount:propTypes.number.isRequired,
   }
   state = {
     selectedNumbers:[],
@@ -30,12 +30,28 @@ export default class Game extends Component {
     this.setState((prevState)=>({selectedNumbers:[...prevState.selectedNumbers, numberIndex],
     }));
   }
+  gameStatus=()=>{
+    const sumSelected = this.state.selectedNumbers.reduce((acc,curr)=>{
+      return acc + this.randomNumbers[curr];
+    },0)
+    if(sumSelected < this.target){
+      return 'PLAYING'
+    }
+    if(sumSelected == this.target)
+    {
+      return "WON"
+    }
+    if(sumSelected > this.target)
+    {
+      return 'LOST'
+    }
+  }
+ 
   render() {
-    console.log(this.randomNumbers)
-    console.log("randomnumbers")
+    const gameStatus = this.gameStatus();
     return (
       <View style={styles.container}>
-          <Text style={styles.target}>{this.target}</Text>
+          <Text style={[styles.target, styles[`STATUS_${gameStatus}`]]}>{this.target}</Text>
           <View style={styles.randomContainer}>
             {this.randomNumbers.map((randomNumber, index)=>
               <RandomNumber 
@@ -43,12 +59,13 @@ export default class Game extends Component {
                 key={index}
                 id={index}
                 number={randomNumber}
-                isDisabled = {this.isNumberSelected(index)}
+                isDisabled = {this.isNumberSelected(index)|| gameStatus!='PLAYING'}
                 onPress={this.selectNumber}
               />
             )}
           </View>
           <StatusBar style="auto" />
+          <Text>{gameStatus}</Text>
       </View>
     )
   }
@@ -63,7 +80,6 @@ const styles = StyleSheet.create({
   },
   target:{
     textAlign:'center',
-    backgroundColor:"green",
     color:"white",
     marginHorizontal:50,
     fontSize:40,
@@ -74,5 +90,16 @@ const styles = StyleSheet.create({
     flexWrap:"wrap",  
     justifyContent:'space-around'
   },
+  STATUS_PLAYING:{
+    backgroundColor:"#bbb",
+
+  },
+  STATUS_WON:{
+    backgroundColor:"green",
+  },
+  STATUS_LOST:{
+    backgroundColor:"red",
+
+  }
 
 });
