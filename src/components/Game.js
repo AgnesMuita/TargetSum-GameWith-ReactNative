@@ -52,7 +52,7 @@ export default class Game extends Component {
       selectedNumbers:[...prevState.selectedNumbers, numberIndex],
     }));
   }
-  componentWillUpdate(nextProps, nextState){
+  componentDidUpdate(nextProps, nextState){
     if (nextState.selectedNumbers !== this.state.selectedNumbers || 
         nextState.remainingSeconds === 0 )
     {
@@ -103,7 +103,9 @@ export default class Game extends Component {
           </View>
           <StatusBar style="auto" />
           <Text>{gameStatus}</Text>
-          <Button title= "Play Again" onPress={this.props.onPlayAgain}/>
+          {this.gameStatus !== 'PLAYING' && (
+            <Button title= "Play Again" onPress={this.props.onPlayAgain}/>
+          )}
       </View>
     )
   }
